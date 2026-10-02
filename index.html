@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<title>별찌 멘탈 지키기</title>
+<style>
+  :root{
+    --bg:#0f1226;
+    --panel:#171b36;
+    --text:#f6f7ff;
+    --muted:#adb3d6;
+    --accent:#ffd84d;
+    --danger:#ff5d73;
+    --good:#63e6be;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    background:radial-gradient(circle at top,#222758 0,#0f1226 55%,#090b19 100%);
+    color:var(--text);
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+  }
+  .wrap{
+    width:min(760px,100%);
+    background:rgba(23,27,54,.92);
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:24px;
+    padding:18px;
+    box-shadow:0 20px 60px rgba(0,0,0,.35);
+  }
+  .top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:12px;
+    margin-bottom:12px;
+  }
+  h1{font-size:clamp(22px,4vw,34px);margin:0}
+  .badge{
+    background:#262c59;
+    border-radius:999px;
+    padding:8px 12px;
+    font-size:14px;
+    color:#dce1ff;
+    white-space:nowrap;
+  }
+  .stats{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:8px;
+    margin-bottom:10px;
+  }
+  .stat{
+    background:#10142d;
+    border-radius:14px;
+    padding:10px 12px;
+    text-align:center;
+  }
+  .stat b{display:block;font-size:20px}
+  .stat span{font-size:12px;color:var(--muted)}
+  #game{
+    position:relative;
+    height:min(58vh,520px);
+    min-height:420px;
+    overflow:hidden;
+    border-radius:20px;
+    background:
+      linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px),
+      #0b0f24;
+    background-size:28px 28px;
+    border:1px solid rgba(255,255,255,.08);
+    touch-action:none;
+  }
+  #player{
+    position:absolute;
+    width:58px;height:58px;
+    border-radius:50%;
+    background:radial-gradient(circle at 35% 30%,#fff7b0,#ffd84d 55%,#e6a700 100%);
+    box-shadow:0 8px 20px rgba(255,216,77,.25);
+    display:flex;align-items:center;justify-content:center;
+    font-size:30px;
+    user-select:none;
+    z-index:5;
+  }
+  .enemy,.good{
+    position:absolute;
+    width:46px;height:46px;
+    border-radius:14px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:24px;
+    user-select:none;
+  }
+  .enemy{background:#39203a;border:1px solid rgba(255,93,115,.4)}
+  .good{background:#173d38;border:1px solid rgba(99,230,190,.4)}
+  .overlay{
+    position:absolute;inset:0;
+    display:flex;align-items:center;justify-content:center;
+    background:rgba(7,9,20,.72);
+    z-index:20;
+    padding:24px;
+  }
+  .card{
+    width:min(420px,100%);
+    background:#151a37;
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:20px;
+    padding:22px;
+    text-align:center;
+  }
+  .card h2{margin:0 0 10px;font-size:28px}
+  .card p{margin:8px 0;color:#c4c9e7;line-height:1.5}
+  button{
+    border:0;border-radius:14px;
+    padding:12px 16px;
+    font-size:16px;font-weight:700;
+    cursor:pointer;
+  }
+  #startBtn,#restartBtn{background:var(--accent);color:#221b00;width:100%;margin-top:12px}
+  .controls{
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    gap:8px;
+    margin-top:12px;
+    max-width:280px;
+    margin-inline:auto;
+  }
+  .controls button{
+    background:#262c59;color:white;
+    min-height:48px;
+  }
+  .controls .empty{visibility:hidden}
+  .hint{
+    text-align:center;
+    color:var(--muted);
+    font-size:13px;
+    margin-top:10px;
+  }
+  .mentalbar{
+    height:10px;background:#252a4c;border-radius:99px;overflow:hidden;margin-top:4px
+  }
+  #mentalFill{height:100%;width:100%;background:linear-gradient(90deg,#ff5d73,#ffd84d,#63e6be)}
+  @media(max-width:520px){
+    body{padding:8px}
+    .wrap{padding:12px;border-radius:18px}
+    #game{min-height:380px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div>
+      <h1>⭐ 별찌 멘탈 지키기</h1>
+      <div style="color:#adb3d6;font-size:14px;margin-top:4px">억까는 피하고, 행복은 먹어라.</div>
+    </div>
+    <div class="badge">BEST <span id="best">0</span></div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><b id="score">0</b><span>점수</span></div>
+    <div class="stat"><b id="time">0.0</b><span>생존시간</span></div>
+    <div class="stat">
+      <b id="mentalText">100%</b><span>멘탈</span>
+      <div class="mentalbar"><div id="mentalFill"></div></div>
+    </div>
+  </div>
+
+  <div id="game" aria-label="별찌 멘탈 지키기 게임 영역">
+    <div id="player">⭐</div>
+
+    <div id="startOverlay" class="overlay">
+      <div class="card">
+        <h2>별찌 출격</h2>
+        <p>💼 업무폭탄 · 💀 레이드 실수 · 😡 억까를 피하세요.</p>
+        <p>🍗 치킨 · ☕ 커피 · 💖 칭찬을 먹으면 멘탈이 회복됩니다.</p>
+        <p><b>키보드:</b> 방향키 / WASD<br><b>모바일:</b> 아래 버튼</p>
+        <button id="startBtn">게임 시작</button>
+      </div>
+    </div>
+
+    <div id="gameOver" class="overlay" style="display:none">
+      <div class="card">
+        <h2>💥 별찌 멘탈 붕괴</h2>
+        <p id="resultText"></p>
+        <button id="restartBtn">다시 도전</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="controls" aria-label="모바일 조작 버튼">
+    <div class="empty"></div>
+    <button type="button" data-dir="up">▲</button>
+    <div class="empty"></div>
+    <button type="button" data-dir="left">◀</button>
+    <button type="button" data-dir="down">▼</button>
+    <button type="button" data-dir="right">▶</button>
+  </div>
+
+  <div class="hint">버틸수록 속도가 빨라집니다. 좋은 아이템은 +멘탈 / 나쁜 아이템은 -멘탈.</div>
+</div>
+
+<script>
+(() => {
+  const game = document.getElementById('game');
+  const player = document.getElementById('player');
+  const scoreEl = document.getElementById('score');
+  const timeEl = document.getElementById('time');
+  const mentalText = document.getElementById('mentalText');
+  const mentalFill = document.getElementById('mentalFill');
+  const startOverlay = document.getElementById('startOverlay');
+  const gameOver = document.getElementById('gameOver');
+  const resultText = document.getElementById('resultText');
+  const startBtn = document.getElementById('startBtn');
+  const restartBtn = document.getElementById('restartBtn');
+  const bestEl = document.getElementById('best');
+
+  let best = 0;
+  try { best = Number(localStorage.getItem('byeoljji-best') || 0); } catch(e){}
+  bestEl.textContent = best;
+
+  let running=false, last=0, spawnTimer=0, goodTimer=0, startTime=0;
+  let mental=100, score=0;
+  let x=0, y=0;
+  const keys = {};
+  const objects = [];
+
+  function clamp(v,min,max){ return Math.max(min,Math.min(max,v)); }
+
+  function reset(){
+    for(const o of objects) o.el.remove();
+    objects.length=0;
+    mental=100; score=0; spawnTimer=0; goodTimer=0;
+    scoreEl.textContent='0';
+    mentalText.textContent='100%';
+    mentalFill.style.width='100%';
+    timeEl.textContent='0.0';
+    const r=game.getBoundingClientRect();
+    x=(r.width-58)/2;
+    y=r.height-80;
+    player.style.left=x+'px';
+    player.style.top=y+'px';
+  }
+
+  function start(){
+    reset();
+    running=true;
+    startOverlay.style.display='none';
+    gameOver.style.display='none';
+    startTime=performance.now();
+    last=performance.now();
+    requestAnimationFrame(loop);
+  }
+
+  function spawn(type){
+    const r=game.getBoundingClientRect();
+    const el=document.createElement('div');
+    const good = type==='good';
+    el.className=good?'good':'enemy';
+    const goodItems=['🍗','☕','💖','🎮'];
+    const badItems=['💼','💀','😡','🔥'];
+    el.textContent=(good?goodItems:badItems)[Math.floor(Math.random()*4)];
+    const ox=Math.random()*(r.width-46);
+    const speed=(good?110:135) + Math.random()*80 + Math.min(140,(performance.now()-startTime)/80);
+    el.style.left=ox+'px';
+    el.style.top='-52px';
+    game.appendChild(el);
+    objects.push({el,x:ox,y:-52,speed,good});
+  }
+
+  function hit(a,b){
+    return a.x < b.x+b.w && a.x+a.w > b.x && a.y < b.y+b.h && a.y+a.h > b.y;
+  }
+
+  function updateUI(){
+    scoreEl.textContent=Math.floor(score);
+    const elapsed=(performance.now()-startTime)/1000;
+    timeEl.textContent=elapsed.toFixed(1);
+    mentalText.textContent=Math.max(0,Math.round(mental))+'%';
+    mentalFill.style.width=clamp(mental,0,100)+'%';
+  }
+
+  function end(){
+    running=false;
+    const elapsed=(performance.now()-startTime)/1000;
+    const finalScore=Math.floor(score);
+    if(finalScore>best){
+      best=finalScore;
+      bestEl.textContent=best;
+      try { localStorage.setItem('byeoljji-best', String(best)); } catch(e){}
+    }
+    let title = elapsed >= 60 ? '전설의 멘탈' : elapsed >= 30 ? '상당히 단단함' : elapsed >= 15 ? '조금 버팀' : '멘탈이 종잇장';
+    resultText.innerHTML=`생존 <b>${elapsed.toFixed(1)}초</b><br>점수 <b>${finalScore}</b><br><br>${title} ⭐`;
+    gameOver.style.display='flex';
+  }
+
+  function loop(now){
+    if(!running) return;
+    const dt=Math.min((now-last)/1000,.033);
+    last=now;
+
+    const r=game.getBoundingClientRect();
+    const speed=270;
+    let dx=0,dy=0;
+    if(keys.ArrowLeft||keys.a||keys.A) dx-=1;
+    if(keys.ArrowRight||keys.d||keys.D) dx+=1;
+    if(keys.ArrowUp||keys.w||keys.W) dy-=1;
+    if(keys.ArrowDown||keys.s||keys.S) dy+=1;
+    if(dx&&dy){ dx*=.707; dy*=.707; }
+    x=clamp(x+dx*speed*dt,0,r.width-58);
+    y=clamp(y+dy*speed*dt,0,r.height-58);
+    player.style.left=x+'px';
+    player.style.top=y+'px';
+
+    spawnTimer+=dt;
+    goodTimer+=dt;
+    const difficulty=Math.max(.28,.78-(now-startTime)/90000);
+    if(spawnTimer>difficulty){ spawn('bad'); spawnTimer=0; }
+    if(goodTimer>3.4){ spawn('good'); goodTimer=0; }
+
+    const pr={x:x+7,y:y+7,w:44,h:44};
+
+    for(let i=objects.length-1;i>=0;i--){
+      const o=objects[i];
+      o.y+=o.speed*dt;
+      o.el.style.top=o.y+'px';
+
+      if(hit(pr,{x:o.x,y:o.y,w:46,h:46})){
+        if(o.good){
+          mental=Math.min(100,mental+18);
+          score+=35;
+        } else {
+          mental-=22;
+        }
+        o.el.remove();
+        objects.splice(i,1);
+        continue;
+      }
+
+      if(o.y>r.height+60){
+        if(!o.good) score+=4;
+        o.el.remove();
+        objects.splice(i,1);
+      }
+    }
+
+    score += dt*8;
+    updateUI();
+
+    if(mental<=0){ end(); return; }
+    requestAnimationFrame(loop);
+  }
+
+  document.addEventListener('keydown',e=>{
+    if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','w','a','s','d','W','A','S','D'].includes(e.key)){
+      e.preventDefault();
+      keys[e.key]=true;
+    }
+  },{passive:false});
+  document.addEventListener('keyup',e=>keys[e.key]=false);
+
+  document.querySelectorAll('[data-dir]').forEach(btn=>{
+    const map={left:'ArrowLeft',right:'ArrowRight',up:'ArrowUp',down:'ArrowDown'};
+    const key=map[btn.dataset.dir];
+    const down=e=>{e.preventDefault(); keys[key]=true;};
+    const up=e=>{e.preventDefault(); keys[key]=false;};
+    btn.addEventListener('pointerdown',down);
+    btn.addEventListener('pointerup',up);
+    btn.addEventListener('pointercancel',up);
+    btn.addEventListener('pointerleave',up);
+  });
+
+  startBtn.addEventListener('click',start);
+  restartBtn.addEventListener('click',start);
+
+  window.addEventListener('resize',()=>{
+    if(!running) reset();
+  });
+
+  reset();
+})();
+</script>
+</body>
+</html>
