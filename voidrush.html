@@ -1,290 +1,170 @@
 <!doctype html>
 <html lang="ko">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<meta name="theme-color" content="#070a12">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>별찌: VOID RUSH</title>
 <style>
-:root{
-  --bg:#070a12;--panel:#0d1320;--panel2:#111a2b;--line:#22304a;
-  --text:#f7f9ff;--muted:#8e9ab2;--cyan:#73e6ff;--violet:#a98cff;
-  --gold:#ffd56a;--red:#ff677f;--green:#75e3a8;
-}
-*{box-sizing:border-box}
-html,body{margin:0;min-height:100%;background:
-radial-gradient(circle at 50% -10%,#16213a 0,#090d17 43%,#05070c 100%);
-color:var(--text);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-body{padding:12px}
-.shell{width:min(1240px,100%);margin:auto}
-.topbar{display:flex;justify-content:space-between;align-items:flex-end;gap:14px;flex-wrap:wrap;margin-bottom:10px}
-.title h1{margin:0;font-size:clamp(28px,4.5vw,48px);letter-spacing:-1.2px}
-.title h1 span{color:var(--cyan);text-shadow:0 0 22px rgba(115,230,255,.3)}
-.title p{margin:5px 0 0;color:var(--muted);font-size:13px}
-.stats{display:flex;gap:8px;flex-wrap:wrap}
-.stat{background:linear-gradient(180deg,#111929,#0b101b);border:1px solid var(--line);border-radius:13px;padding:8px 12px;min-width:80px;text-align:center}
-.stat small{display:block;font-size:10px;color:var(--muted);letter-spacing:.08em}.stat b{font-size:19px}
-.gameframe{background:linear-gradient(180deg,#0e1420,#080c14);border:1px solid #26344d;border-radius:22px;padding:9px;box-shadow:0 24px 80px rgba(0,0,0,.34)}
-.stage{position:relative;overflow:hidden;border-radius:15px}
-canvas{display:block;width:100%;height:auto;background:#070b13;touch-action:none}
-.overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(3,6,11,.67);backdrop-filter:blur(7px);z-index:8}
-.panel{width:min(560px,94%);background:linear-gradient(180deg,rgba(18,27,44,.98),rgba(9,14,24,.98));border:1px solid #30425f;border-radius:22px;padding:24px;text-align:center;box-shadow:0 25px 70px rgba(0,0,0,.45)}
-.logoMark{width:74px;height:74px;margin:0 auto 12px;border-radius:24px;display:grid;place-items:center;background:
-radial-gradient(circle at 35% 30%,#d9fbff,#79e9ff 32%,#5d79ff 70%,#2a245b);box-shadow:0 0 44px rgba(111,220,255,.35);font-size:34px;font-weight:1000;color:#07111a;transform:rotate(8deg)}
-.panel h2{margin:0 0 8px;font-size:31px;letter-spacing:-.5px}.panel p{margin:8px 0;color:#b9c5da;line-height:1.55;font-size:14px}
-.primary{width:100%;margin-top:10px;border:1px solid #99edff;border-radius:13px;padding:14px 18px;background:linear-gradient(180deg,#8ef2ff,#54cde9);font-weight:900;font-size:16px;color:#07121a;cursor:pointer;box-shadow:0 10px 30px rgba(76,208,239,.2)}
-.primary:active{transform:translateY(1px)}
-.hud{position:absolute;left:14px;right:14px;top:14px;display:flex;justify-content:space-between;gap:10px;pointer-events:none;z-index:4}
-.hudbox{background:rgba(6,10,18,.72);border:1px solid rgba(141,177,220,.2);backdrop-filter:blur(6px);border-radius:12px;padding:9px 11px;min-width:180px}
-.row{display:flex;justify-content:space-between;gap:12px;font-size:11px;color:#aab6ca;margin-bottom:5px}
-.bar{height:8px;border-radius:99px;background:#182234;overflow:hidden}.fill{height:100%;transition:width .16s}.hp{background:linear-gradient(90deg,#ff5d78,#ff899b)}.xp{background:linear-gradient(90deg,#6f8cff,#79e7ff)}
-.wavebox{text-align:right;background:rgba(6,10,18,.72);border:1px solid rgba(141,177,220,.2);backdrop-filter:blur(6px);border-radius:12px;padding:9px 12px}
-.wavebox small{display:block;color:#8e9ab2;font-size:10px}.wavebox b{font-size:18px}
-.bottomRow{display:grid;grid-template-columns:1fr 300px;gap:10px;margin-top:10px}
-.card{background:linear-gradient(180deg,#0f1624,#0a0f19);border:1px solid #22304a;border-radius:16px;padding:13px}
-.card h3{margin:0 0 7px;font-size:13px;color:#cfd7e6}.card p{margin:0;color:#8693aa;font-size:12px;line-height:1.55}
-.skills{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
-.skillTag{display:flex;align-items:center;gap:7px;background:#10192a;border:1px solid #263550;border-radius:11px;padding:7px 9px;font-size:11px;color:#b8c3d5}
-.dot{width:9px;height:9px;border-radius:50%;box-shadow:0 0 12px currentColor}
-.levelChoices{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:14px}
-.choice{border:1px solid #2c3e5c;border-radius:15px;background:linear-gradient(180deg,#121c2e,#0a111e);padding:14px;text-align:left;color:#fff;cursor:pointer;min-height:142px}
-.choice:hover{border-color:#69dff7}.choice .rarity{font-size:10px;font-weight:800;letter-spacing:.08em;margin-bottom:10px}.choice h4{margin:0 0 6px;font-size:15px}.choice p{margin:0;font-size:12px;color:#99a7bf;line-height:1.45}.choice .lvl{margin-top:10px;color:#d9f8ff;font-size:11px}
-.mobile{display:none;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:10px}.mobile button{min-height:50px;border:1px solid #2f4261;border-radius:13px;background:#111b2d;color:white;font-size:17px;font-weight:900;touch-action:none}.mobile .dash{grid-column:1/4;background:linear-gradient(180deg,#273b62,#172541)}
-.toast{position:absolute;left:50%;top:76px;transform:translateX(-50%) translateY(-8px);padding:9px 14px;border-radius:999px;background:rgba(7,12,21,.9);border:1px solid #2f435f;font-size:12px;font-weight:800;opacity:0;transition:.2s;z-index:5;pointer-events:none}.toast.show{opacity:1;transform:translateX(-50%)}
-.bossbar{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);width:min(520px,70%);background:rgba(4,8,15,.82);border:1px solid rgba(255,112,137,.35);border-radius:13px;padding:8px 10px;z-index:5;display:none}.bossbar .bar{height:10px}.bossbar .fill{background:linear-gradient(90deg,#ff5574,#ff966c)}
-@media(max-width:900px){.bottomRow{grid-template-columns:1fr}.mobile{display:grid}.levelChoices{grid-template-columns:1fr}.hudbox{min-width:145px}}
-</style>
-</head>
-<body>
-<div class="shell">
-  <div class="topbar">
-    <div class="title"><h1>별찌: <span>VOID RUSH</span></h1><p>네온 아레나 로그라이크 · 자동사격 · 웨이브 · 보스 · 랜덤 빌드</p></div>
-    <div class="stats">
-      <div class="stat"><small>LEVEL</small><b id="levelTop">1</b></div>
-      <div class="stat"><small>KILLS</small><b id="killsTop">0</b></div>
-      <div class="stat"><small>SCORE</small><b id="scoreTop">0</b></div>
-      <div class="stat"><small>BEST</small><b id="bestTop">0</b></div>
-    </div>
-  </div>
-
-  <div class="gameframe">
-    <div class="stage">
-      <canvas id="game" width="1100" height="650"></canvas>
-
-      <div class="hud">
-        <div class="hudbox">
-          <div class="row"><span>CORE INTEGRITY</span><b id="hpLabel">100 / 100</b></div>
-          <div class="bar"><div id="hpBar" class="fill hp" style="width:100%"></div></div>
-          <div class="row" style="margin-top:7px"><span>SYNC XP</span><b id="xpLabel">0 / 40</b></div>
-          <div class="bar"><div id="xpBar" class="fill xp" style="width:0%"></div></div>
-        </div>
-        <div class="wavebox"><small>WAVE</small><b id="waveLabel">1 / 5</b><small id="enemyLabel">0 HOSTILES</small></div>
-      </div>
-
-      <div class="bossbar" id="bossbar">
-        <div class="row"><span>VOID TITAN</span><b id="bossHpLabel">100%</b></div>
-        <div class="bar"><div class="fill" id="bossFill" style="width:100%"></div></div>
-      </div>
-
-      <div class="toast" id="toast">DASH READY</div>
-
-      <div class="overlay" id="overlay">
-        <div class="panel" id="panel">
-          <div class="logoMark">V</div>
-          <h2>VOID RUSH</h2>
-          <p>적을 자동으로 조준하고 사격한다. 너는 <b>이동·회피·빌드 선택</b>에 집중하면 된다.</p>
-          <p><b>WASD / 방향키</b> 이동 · <b>Space</b> 대시<br>경험치를 모아 레벨업할 때마다 3개 중 하나를 선택.</p>
-          <p>5번째 웨이브의 <b>VOID TITAN</b>을 처치하면 클리어.</p>
-          <button class="primary" id="startBtn">RUN START</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="mobile">
-      <button id="leftBtn">◀</button><button id="upBtn">▲</button><button id="rightBtn">▶</button>
-      <button id="downBtn" style="grid-column:2">▼</button>
-      <button id="dashBtn" class="dash">⚡ DASH</button>
-    </div>
-  </div>
-
-  <div class="bottomRow">
-    <div class="card">
-      <h3>BUILD</h3>
-      <p>레벨업 때 선택한 강화가 누적된다. 멀티샷, 관통, 치명타, 공전 블레이드, 연쇄 전격 등으로 빌드가 달라진다.</p>
-      <div class="skills" id="skillList"></div>
-    </div>
-    <div class="card">
-      <h3>CONTROLS</h3>
-      <p>이동: WASD / 방향키<br>대시: Space · 1.7초 쿨다운<br>사격: 자동 · 가장 가까운 적 우선</p>
-    </div>
-  </div>
-</div>
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:radial-gradient(circle at top,#18233d,#090d17 45%,#05070c);color:#f7f9ff}body{padding:12px}.wrap{width:min(1180px,100%);margin:auto}.top{display:flex;justify-content:space-between;gap:12px;align-items:flex-end;flex-wrap:wrap;margin-bottom:10px}h1{margin:0;font-size:clamp(28px,4vw,46px)}h1 span{color:#73e6ff}.sub{color:#8e9ab2;font-size:13px;margin-top:5px}.stats{display:flex;gap:8px;flex-wrap:wrap}.stat{min-width:82px;padding:9px 11px;text-align:center;background:#0d1422;border:1px solid #25344e;border-radius:12px}.stat small{display:block;color:#8e9ab2;font-size:10px}.stat b{font-size:19px}.frame{background:#0a101a;border:1px solid #26354f;border-radius:20px;padding:9px}.stage{position:relative;overflow:hidden;border-radius:14px}canvas{display:block;width:100%;height:auto;background:#060a12;touch-action:none}.hud{position:absolute;left:12px;right:12px;top:12px;display:flex;justify-content:space-between;gap:10px;pointer-events:none}.box{background:rgba(5,9,16,.75);border:1px solid rgba(130,170,220,.23);border-radius:11px;padding:8px 10px;min-width:180px;backdrop-filter:blur(5px)}.row{display:flex;justify-content:space-between;gap:12px;font-size:11px;color:#a7b3c8}.bar{height:8px;background:#172236;border-radius:99px;overflow:hidden;margin:5px 0}.fill{height:100%}.hp{background:linear-gradient(90deg,#ff607a,#ff8b9b)}.xp{background:linear-gradient(90deg,#748cff,#72e7ff)}.overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(3,6,11,.68);backdrop-filter:blur(6px)}.panel{width:min(580px,94%);padding:22px;text-align:center;background:linear-gradient(180deg,#121c2d,#090f1a);border:1px solid #304361;border-radius:20px}.panel h2{margin:0 0 8px;font-size:30px}.panel p{color:#acb9ce;line-height:1.55;font-size:14px}.start{width:100%;padding:14px;border:0;border-radius:13px;background:linear-gradient(180deg,#91f2ff,#58cce8);color:#07121a;font-weight:900;font-size:16px;cursor:pointer}.choices{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}.choice{padding:14px;text-align:left;color:#fff;background:#101a2b;border:1px solid #2d4160;border-radius:13px;cursor:pointer}.choice b{display:block;margin-bottom:6px}.choice small{color:#9eabc0;line-height:1.4}.boss{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);width:min(520px,72%);display:none;background:rgba(5,9,16,.82);border:1px solid rgba(255,100,125,.38);border-radius:11px;padding:8px 10px}.mobile{display:none;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:9px}.mobile button{min-height:50px;border:1px solid #304361;border-radius:12px;background:#111b2c;color:#fff;font-size:18px;font-weight:900;touch-action:none}.mobile .dash{grid-column:1/4;background:#1a2944}@media(max-width:850px){.mobile{display:grid}.choices{grid-template-columns:1fr}.box{min-width:145px}}
+</style></head>
+<body><div class="wrap">
+<div class="top"><div><h1>별찌: <span>VOID RUSH</span></h1><div class="sub">네온 아레나 로그라이크 · 자동사격 · 레벨업 · 보스전</div></div><div class="stats"><div class="stat"><small>LEVEL</small><b id="lvl">1</b></div><div class="stat"><small>KILLS</small><b id="kills">0</b></div><div class="stat"><small>SCORE</small><b id="score">0</b></div><div class="stat"><small>BEST</small><b id="best">0</b></div></div></div>
+<div class="frame"><div class="stage"><canvas id="game" width="1100" height="650"></canvas>
+<div class="hud"><div class="box"><div class="row"><span>HP</span><b id="hpText">100 / 100</b></div><div class="bar"><div id="hpBar" class="fill hp" style="width:100%"></div></div><div class="row"><span>XP</span><b id="xpText">0 / 40</b></div><div class="bar"><div id="xpBar" class="fill xp"></div></div></div><div class="box" style="text-align:right"><small style="color:#8e9ab2">WAVE</small><div style="font-weight:900;font-size:19px" id="wave">1 / 5</div><small id="hostiles" style="color:#8e9ab2">0 HOSTILES</small></div></div>
+<div class="boss" id="bossBox"><div class="row"><span>VOID TITAN</span><b id="bossPct">100%</b></div><div class="bar"><div id="bossBar" class="fill hp"></div></div></div>
+<div class="overlay" id="overlay"><div class="panel" id="panel"><h2>VOID RUSH</h2><p>WASD / 방향키로 이동. 가장 가까운 적에게 자동 사격한다.<br>Space로 대시. 경험치를 모으면 강화 3개 중 하나를 선택.</p><p>5번째 웨이브의 <b>VOID TITAN</b>을 처치하면 클리어.</p><button class="start" id="startBtn">RUN START</button></div></div>
+</div><div class="mobile"><button id="left">◀</button><button id="up">▲</button><button id="right">▶</button><button id="down" style="grid-column:2">▼</button><button id="dash" class="dash">⚡ DASH</button></div></div></div>
 <script>
-(()=>{
-const C=document.getElementById('game'),X=C.getContext('2d'),W=C.width,H=C.height;
-const overlay=document.getElementById('overlay'),panel=document.getElementById('panel'),toast=document.getElementById('toast');
-const hpBar=document.getElementById('hpBar'),xpBar=document.getElementById('xpBar'),hpLabel=document.getElementById('hpLabel'),xpLabel=document.getElementById('xpLabel');
-const waveLabel=document.getElementById('waveLabel'),enemyLabel=document.getElementById('enemyLabel'),bossbar=document.getElementById('bossbar'),bossFill=document.getElementById('bossFill'),bossHpLabel=document.getElementById('bossHpLabel');
-const levelTop=document.getElementById('levelTop'),killsTop=document.getElementById('killsTop'),scoreTop=document.getElementById('scoreTop'),bestTop=document.getElementById('bestTop'),skillList=document.getElementById('skillList');
-const keys={};let running=false,paused=false,last=0,time=0,shake=0,flash=0,hitStop=0,best=+(localStorage.getItem('voidrush-best')||0);
-bestTop.textContent=best;
+(function(){
+"use strict";
+const c=document.getElementById("game"),ctx=c.getContext("2d"),W=c.width,H=c.height;
+const overlay=document.getElementById("overlay"),panel=document.getElementById("panel");
+const hpBar=document.getElementById("hpBar"),xpBar=document.getElementById("xpBar"),hpText=document.getElementById("hpText"),xpText=document.getElementById("xpText");
+const lvlEl=document.getElementById("lvl"),killsEl=document.getElementById("kills"),scoreEl=document.getElementById("score"),bestEl=document.getElementById("best"),waveEl=document.getElementById("wave"),hostilesEl=document.getElementById("hostiles");
+const bossBox=document.getElementById("bossBox"),bossBar=document.getElementById("bossBar"),bossPct=document.getElementById("bossPct");
+let best=Number(localStorage.getItem("voidrush-best")||0);bestEl.textContent=best;
+let running=false,paused=false,last=0,t=0,wave=1,waveKills=0,kills=0,score=0,spawnTimer=0,nextWaveTimer=0;
+let enemies=[],bullets=[],gems=[],parts=[],boss=null;
+let keys={};
+let p=null;
+let build={damage:0,rate:0,speed:0,multishot:0,pierce:0,crit:0,maxhp:0};
 
-let p,enemies=[],bullets=[],orbs=[],particles=[],texts=[],rings=[],wave=1,waveKills=0,kills=0,score=0,spawnT=0,waveDelay=0,boss=null;
-let audio=null;
-const build={damage:0,fireRate:0,move:0,maxHp:0,multishot:0,pierce:0,crit:0,orbital:0,chain:0};
-
-const upgrades=[
- {id:'damage',name:'OVERDRIVE',desc:'+24% 무기 피해',rarity:'COMMON',c:'#79e7ff',apply:()=>build.damage++},
- {id:'fireRate',name:'RAPID CORE',desc:'연사속도 +18%',rarity:'COMMON',c:'#79e7ff',apply:()=>build.fireRate++},
- {id:'move',name:'PHASE STEP',desc:'이동속도 +10%',rarity:'COMMON',c:'#79e7ff',apply:()=>build.move++},
- {id:'maxHp',name:'REINFORCED CORE',desc:'최대 체력 +25, 즉시 회복',rarity:'RARE',c:'#a98cff',apply:()=>{build.maxHp++;p.maxHp+=25;p.hp=Math.min(p.maxHp,p.hp+25)}},
- {id:'multishot',name:'TRI-SPLIT',desc:'추가 탄환 +1',rarity:'RARE',c:'#a98cff',apply:()=>build.multishot++},
- {id:'pierce',name:'VOID NEEDLE',desc:'탄환 관통 +1',rarity:'RARE',c:'#a98cff',apply:()=>build.pierce++},
- {id:'crit',name:'CRITICAL MATRIX',desc:'치명타 확률 +10%',rarity:'RARE',c:'#a98cff',apply:()=>build.crit++},
- {id:'orbital',name:'ORBITAL BLADE',desc:'플레이어 주변 공전 블레이드 추가',rarity:'EPIC',c:'#ffd56a',apply:()=>build.orbital++},
- {id:'chain',name:'ARC LINK',desc:'명중 시 인접 적에게 전격',rarity:'EPIC',c:'#ffd56a',apply:()=>build.chain++}
-];
-
-function clamp(v,a,b){return Math.max(a,Math.min(b,v))}function rand(a,b){return Math.random()*(b-a)+a}
-function dist(a,b){return Math.hypot(a.x-b.x,a.y-b.y)}
-function beep(freq=440,d=.05,type='sine',vol=.025){try{if(!audio)audio=new (window.AudioContext||window.webkitAudioContext)();const o=audio.createOscillator(),g=audio.createGain();o.type=type;o.frequency.value=freq;g.gain.setValueAtTime(vol,audio.currentTime);g.gain.exponentialRampToValueAtTime(.0001,audio.currentTime+d);o.connect(g);g.connect(audio.destination);o.start();o.stop(audio.currentTime+d)}catch(e){}}
-function msg(m){toast.textContent=m;toast.classList.add('show');clearTimeout(msg.t);msg.t=setTimeout(()=>toast.classList.remove('show'),700)}
-function particle(x,y,c,n=8,spd=170){for(let i=0;i<n;i++)particles.push({x,y,vx:rand(-spd,spd),vy:rand(-spd,spd),r:rand(1.5,4.2),a:1,c})}
-function text(x,y,t,c='#fff',s=16){texts.push({x,y,t,c,s,a:1,vy:-34})}
-function ring(x,y,c,r=10,max=55){rings.push({x,y,c,r,max,a:.9})}
-
-function resetBuild(){Object.keys(build).forEach(k=>build[k]=0)}
+function clamp(v,a,b){return Math.max(a,Math.min(b,v))}
+function rand(a,b){return Math.random()*(b-a)+a}
+function distance(a,b){return Math.hypot(a.x-b.x,a.y-b.y)}
 function reset(){
- resetBuild();wave=1;waveKills=0;kills=0;score=0;time=0;spawnT=0;waveDelay=0;shake=flash=hitStop=0;boss=null;
- enemies=[];bullets=[];orbs=[];particles=[];texts=[];rings=[];
- p={x:W/2,y:H/2,r:17,hp:100,maxHp:100,xp:0,xpNext:40,level:1,speed:235,fireCd:0,dashCd:0,dashT:0,inv:0,trail:[]};
- updateUI();renderSkills();
+ wave=1;waveKills=0;kills=0;score=0;t=0;spawnTimer=0;nextWaveTimer=0;
+ enemies=[];bullets=[];gems=[];parts=[];boss=null;
+ build={damage:0,rate:0,speed:0,multishot:0,pierce:0,crit:0,maxhp:0};
+ p={x:W/2,y:H/2,r:16,hp:100,maxHp:100,xp:0,nextXp:40,level:1,speed:245,fire:0,dashCd:0,dashT:0,dx:1,dy:0,inv:0};
+ updateUI();
 }
 function updateUI(){
- hpBar.style.width=clamp(p.hp/p.maxHp*100,0,100)+'%';hpLabel.textContent=Math.ceil(Math.max(0,p.hp))+' / '+p.maxHp;
- xpBar.style.width=clamp(p.xp/p.xpNext*100,0,100)+'%';xpLabel.textContent=Math.floor(p.xp)+' / '+p.xpNext;
- waveLabel.textContent=wave+' / 5';enemyLabel.textContent=enemies.length+' HOSTILES';
- levelTop.textContent=p.level;killsTop.textContent=kills;scoreTop.textContent=Math.floor(score);
- if(boss&&boss.alive){bossbar.style.display='block';const q=boss.hp/boss.maxHp*100;bossFill.style.width=q+'%';bossHpLabel.textContent=Math.ceil(q)+'%'}else bossbar.style.display='none';
+ hpBar.style.width=clamp(p.hp/p.maxHp*100,0,100)+"%"; hpText.textContent=Math.ceil(Math.max(0,p.hp))+" / "+p.maxHp;
+ xpBar.style.width=clamp(p.xp/p.nextXp*100,0,100)+"%"; xpText.textContent=Math.floor(p.xp)+" / "+p.nextXp;
+ lvlEl.textContent=p.level;killsEl.textContent=kills;scoreEl.textContent=Math.floor(score);bestEl.textContent=best;
+ waveEl.textContent=wave+" / 5";hostilesEl.textContent=enemies.length+" HOSTILES";
+ if(boss&&boss.alive){bossBox.style.display="block";const q=clamp(boss.hp/boss.maxHp*100,0,100);bossBar.style.width=q+"%";bossPct.textContent=Math.ceil(q)+"%"}else bossBox.style.display="none";
 }
-function renderSkills(){
- const names={damage:'DMG',fireRate:'RATE',move:'MOVE',maxHp:'HP',multishot:'MULTI',pierce:'PIERCE',crit:'CRIT',orbital:'ORBIT',chain:'ARC'};
- skillList.innerHTML='';
- Object.keys(build).filter(k=>build[k]>0).forEach(k=>{const e=document.createElement('div');e.className='skillTag';e.innerHTML='<span class="dot" style="color:#73e6ff;background:#73e6ff"></span><b>'+names[k]+' '+build[k]+'</b>';skillList.appendChild(e)});
- if(!skillList.children.length)skillList.innerHTML='<span style="font-size:11px;color:#68768e">아직 선택한 강화 없음</span>';
+function spawnEnemy(){
+ const edge=Math.floor(Math.random()*4);let x=0,y=0;
+ if(edge===0){x=rand(0,W);y=-30}else if(edge===1){x=W+30;y=rand(0,H)}else if(edge===2){x=rand(0,W);y=H+30}else{x=-30;y=rand(0,H)}
+ const r=Math.random(),scale=1+(wave-1)*.16;
+ let e;
+ if(r<.58)e={x,y,r:13,hp:34*scale,speed:82+wave*6,dmg:12,color:"#ff6683",xp:9};
+ else if(r<.83)e={x,y,r:10,hp:22*scale,speed:135+wave*8,dmg:10,color:"#ffae69",xp:8};
+ else e={x,y,r:21,hp:95*scale,speed:54+wave*4,dmg:20,color:"#ad7dff",xp:16};
+ enemies.push(e);
 }
-function spawnEnemy(type='drone'){
- const edge=Math.floor(Math.random()*4);let x,y;
- if(edge===0){x=rand(-50,W+50);y=-40}if(edge===1){x=W+40;y=rand(-40,H+40)}if(edge===2){x=rand(-50,W+50);y=H+40}if(edge===3){x=-40;y=rand(-40,H+40)}
- const scale=1+(wave-1)*.17;
- if(type==='drone')enemies.push({type,x,y,r:13,hp:32*scale,maxHp:32*scale,speed:75+wave*7,dmg:12,color:'#ff6683',xp:8,elite:false,hit:0});
- if(type==='runner')enemies.push({type,x,y,r:10,hp:20*scale,maxHp:20*scale,speed:128+wave*9,dmg:10,color:'#ffac69',xp:7,elite:false,hit:0});
- if(type==='brute')enemies.push({type,x,y,r:21,hp:92*scale,maxHp:92*scale,speed:48+wave*4,dmg:20,color:'#bb78ff',xp:15,elite:false,hit:0});
- if(type==='elite')enemies.push({type:'brute',x,y,r:27,hp:220*scale,maxHp:220*scale,speed:58,dmg:28,color:'#ffd56a',xp:35,elite:true,hit:0});
+function spawnBoss(){boss={x:W/2,y:90,r:50,hp:1600,maxHp:1600,speed:48,dmg:25,alive:true,shot:1.4,phase:0}}
+function nearest(){
+ let target=null,d=Infinity;
+ for(const e of enemies){const n=(e.x-p.x)**2+(e.y-p.y)**2;if(n<d){d=n;target=e}}
+ if(boss&&boss.alive){const n=(boss.x-p.x)**2+(boss.y-p.y)**2;if(n<d)target=boss}
+ return target;
 }
-function spawnBoss(){boss={x:W/2,y:95,r:52,hp:1700,maxHp:1700,speed:52,dmg:28,alive:true,phase:0,shoot:1.5,hit:0};msg('⚠ VOID TITAN INBOUND');beep(110,.3,'sawtooth',.06);ring(W/2,95,'#ff5f7b',20,130)}
-function nearest(from,exclude=null){let best=null,bd=Infinity;for(const e of enemies){if(e===exclude||e.hp<=0)continue;const d=(e.x-from.x)**2+(e.y-from.y)**2;if(d<bd){bd=d;best=e}}if(boss&&boss.alive){const d=(boss.x-from.x)**2+(boss.y-from.y)**2;if(d<bd)best=boss}return best}
-function fire(){
- const target=nearest(p);if(!target)return;
- const a=Math.atan2(target.y-p.y,target.x-p.x);const count=1+Math.min(3,build.multishot);
- for(let i=0;i<count;i++){const spread=(i-(count-1)/2)*.13;const ang=a+spread;bullets.push({x:p.x,y:p.y,vx:Math.cos(ang)*550,vy:Math.sin(ang)*550,r:4,life:1.45,dmg:20*(1+build.damage*.24),pierce:build.pierce,crit:Math.random()<Math.min(.55,build.crit*.1)})}
- particle(p.x+Math.cos(a)*16,p.y+Math.sin(a)*16,'#83ecff',3,60);beep(520,.025,'square',.012)
+function shoot(){
+ const q=nearest();if(!q)return;
+ const a=Math.atan2(q.y-p.y,q.x-p.x),count=1+Math.min(3,build.multishot);
+ for(let i=0;i<count;i++){const ang=a+(i-(count-1)/2)*.14;bullets.push({x:p.x,y:p.y,vx:Math.cos(ang)*590,vy:Math.sin(ang)*590,r:4,life:1.5,dmg:21*(1+build.damage*.22),pierce:build.pierce,crit:Math.random()<Math.min(.5,build.crit*.1),enemy:false})}
 }
-function hurt(n){
- if(p.inv>0||p.dashT>0)return;p.hp-=n;p.inv=.65;shake=9;flash=.14;particle(p.x,p.y,'#ff617c',18,220);text(p.x,p.y-26,'-'+Math.round(n),'#ff758c',20);beep(120,.1,'sawtooth',.04);
- if(p.hp<=0)gameOver();updateUI()
-}
+function particles(x,y,color,n){for(let i=0;i<n;i++)parts.push({x,y,vx:rand(-180,180),vy:rand(-180,180),a:1,r:rand(1.5,4),color})}
 function killEnemy(e){
- const idx=enemies.indexOf(e);if(idx>=0)enemies.splice(idx,1);kills++;waveKills++;score+=e.elite?350:100;particle(e.x,e.y,e.color,e.elite?28:13,e.elite?260:180);ring(e.x,e.y,e.color,5,e.elite?70:38);orbs.push({x:e.x,y:e.y,r:e.elite?7:5,xp:e.xp,vx:rand(-40,40),vy:rand(-40,40)});beep(e.elite?220:300,.05,'triangle',.018)
+ const i=enemies.indexOf(e);if(i<0)return;
+ enemies.splice(i,1);kills++;waveKills++;score+=100;gems.push({x:e.x,y:e.y,r:5,xp:e.xp});particles(e.x,e.y,e.color,12);
 }
-function chainFrom(target,dmg){
- if(!build.chain)return;let cur=target;const jumps=Math.min(4,build.chain+1);for(let j=0;j<jumps;j++){const n=nearest(cur,cur);if(!n||dist(cur,n)>150)break;bullets.push({chain:true,x:cur.x,y:cur.y,tx:n.x,ty:n.y,life:.12});if(n===boss){n.hp-=dmg*.35;if(n.hp<=0)bossDead()}else{n.hp-=dmg*.35;n.hit=.08;if(n.hp<=0)killEnemy(n)}cur=n}
+function hurt(n){if(p.inv>0||p.dashT>0)return;p.hp-=n;p.inv=.65;particles(p.x,p.y,"#ff6680",18);if(p.hp<=0){gameOver()}updateUI()}
+function gainXp(n){
+ p.xp+=n;
+ if(p.xp>=p.nextXp){p.xp-=p.nextXp;p.level++;p.nextXp=Math.floor(p.nextXp*1.28+10);levelUp()}
 }
-function bossDead(){if(!boss||!boss.alive)return;boss.alive=false;score+=4000;particle(boss.x,boss.y,'#ff8bac',60,330);ring(boss.x,boss.y,'#ffd56a',20,180);msg('VOID TITAN DOWN');beep(80,.55,'sawtooth',.06);setTimeout(()=>finish(),800)}
-function gainXP(v){p.xp+=v;while(p.xp>=p.xpNext){p.xp-=p.xpNext;p.level++;p.xpNext=Math.floor(p.xpNext*1.26+12);levelUp();break}}
+const choices=[
+ ["OVERDRIVE","+22% 피해",()=>build.damage++],
+ ["RAPID CORE","연사속도 +18%",()=>build.rate++],
+ ["PHASE STEP","이동속도 +10%",()=>build.speed++],
+ ["MULTI SHOT","추가 탄환 +1",()=>build.multishot++],
+ ["VOID NEEDLE","관통 +1",()=>build.pierce++],
+ ["CRIT MATRIX","치명타 +10%",()=>build.crit++],
+ ["REINFORCED","+25 최대 체력",()=>{build.maxhp++;p.maxHp+=25;p.hp=Math.min(p.maxHp,p.hp+25)}]
+];
 function levelUp(){
- paused=true;beep(780,.12,'triangle',.035);const shuffled=[...upgrades].sort(()=>Math.random()-.5).slice(0,3);
- panel.innerHTML='<div class="logoMark">+</div><h2>SYNC LEVEL '+p.level+'</h2><p>강화 하나를 선택하세요.</p><div class="levelChoices" id="choices"></div>';
- const box=panel.querySelector('#choices');
- shuffled.forEach(u=>{const b=document.createElement('button');b.className='choice';b.innerHTML='<div class="rarity" style="color:'+u.c+'">'+u.rarity+'</div><h4>'+u.name+'</h4><p>'+u.desc+'</p><div class="lvl">현재 LV '+build[u.id]+'</div>';b.addEventListener('click',()=>{u.apply();renderSkills();overlay.style.display='none';paused=false;updateUI();last=performance.now();requestAnimationFrame(loop)});box.appendChild(b)});
- overlay.style.display='flex';
+ paused=true;
+ const arr=[...choices].sort(()=>Math.random()-.5).slice(0,3);
+ panel.innerHTML='<h2>LEVEL '+p.level+'</h2><p>강화 하나를 선택하세요.</p><div class="choices" id="choiceBox"></div>';
+ const box=document.getElementById("choiceBox");
+ arr.forEach(u=>{const b=document.createElement("button");b.className="choice";b.innerHTML="<b>"+u[0]+"</b><small>"+u[1]+"</small>";b.addEventListener("click",()=>{u[2]();overlay.style.display="none";paused=false;last=performance.now();updateUI();requestAnimationFrame(loop)});box.appendChild(b)});
+ overlay.style.display="flex";
 }
-function start(){reset();overlay.style.display='none';running=true;paused=false;last=performance.now();requestAnimationFrame(loop)}
-function gameOver(){running=false;paused=false;if(score>best){best=Math.floor(score);localStorage.setItem('voidrush-best',best)}updateUI();panel.innerHTML='<div class="logoMark" style="filter:saturate(.35)">×</div><h2>CORE LOST</h2><p>WAVE <b>'+wave+'</b> · KILLS <b>'+kills+'</b> · LEVEL <b>'+p.level+'</b></p><p>최종 점수 <b>'+Math.floor(score)+'</b></p><button class="primary" id="retry">REBOOT</button>';overlay.style.display='flex';document.getElementById('retry').addEventListener('click',start)}
-function finish(){running=false;if(score>best){best=Math.floor(score);localStorage.setItem('voidrush-best',best)}updateUI();panel.innerHTML='<div class="logoMark">✓</div><h2>RUN COMPLETE</h2><p>VOID TITAN 제거 완료.</p><p>KILLS <b>'+kills+'</b> · LEVEL <b>'+p.level+'</b><br>SCORE <b>'+Math.floor(score)+'</b></p><button class="primary" id="retry">NEW RUN</button>';overlay.style.display='flex';document.getElementById('retry').addEventListener('click',start)}
-function dash(){if(!running||paused||p.dashCd>0)return;p.dashCd=1.7;p.dashT=.22;p.inv=.27;const dx=(keys.right?1:0)-(keys.left?1:0),dy=(keys.down?1:0)-(keys.up?1:0);let l=Math.hypot(dx,dy);p.dashX=l?dx/l:1;p.dashY=l?dy/l:0;particle(p.x,p.y,'#71e5ff',15,210);ring(p.x,p.y,'#71e5ff',8,54);beep(260,.08,'sawtooth',.025)}
+function dash(){
+ if(!running||paused||p.dashCd>0)return;
+ let dx=(keys.right?1:0)-(keys.left?1:0),dy=(keys.down?1:0)-(keys.up?1:0);
+ let m=Math.hypot(dx,dy);if(!m){dx=1;dy=0;m=1}
+ p.dx=dx/m;p.dy=dy/m;p.dashT=.2;p.dashCd=1.7;p.inv=.25;particles(p.x,p.y,"#73e6ff",12);
+}
+function gameOver(){
+ running=false;if(score>best){best=Math.floor(score);localStorage.setItem("voidrush-best",best)}
+ updateUI();panel.innerHTML='<h2>CORE LOST</h2><p>WAVE '+wave+' · KILLS '+kills+' · LEVEL '+p.level+'</p><p>점수 <b>'+Math.floor(score)+'</b></p><button class="start" id="retry">REBOOT</button>';overlay.style.display="flex";document.getElementById("retry").addEventListener("click",start)
+}
+function finish(){
+ running=false;if(score>best){best=Math.floor(score);localStorage.setItem("voidrush-best",best)}
+ updateUI();panel.innerHTML='<h2>RUN COMPLETE</h2><p>VOID TITAN 처치 완료.</p><p>KILLS '+kills+' · LEVEL '+p.level+'<br>점수 <b>'+Math.floor(score)+'</b></p><button class="start" id="retry">NEW RUN</button>';overlay.style.display="flex";document.getElementById("retry").addEventListener("click",start)
+}
 function update(dt){
- if(hitStop>0){hitStop-=dt;return}
- time+=dt;p.inv=Math.max(0,p.inv-dt);p.dashCd=Math.max(0,p.dashCd-dt);p.dashT=Math.max(0,p.dashT-dt);
- let dx=(keys.right?1:0)-(keys.left?1:0),dy=(keys.down?1:0)-(keys.up?1:0);let l=Math.hypot(dx,dy);if(l){dx/=l;dy/=l}
- const sp=p.speed*(1+build.move*.1);if(p.dashT>0){p.x+=p.dashX*650*dt;p.y+=p.dashY*650*dt}else{p.x+=dx*sp*dt;p.y+=dy*sp*dt}
- p.x=clamp(p.x,28,W-28);p.y=clamp(p.y,28,H-28);
- p.trail.push({x:p.x,y:p.y,a:.28});if(p.trail.length>12)p.trail.shift();
- const fireRate=Math.max(.11,.44*Math.pow(.82,build.fireRate));p.fireCd-=dt;if(p.fireCd<=0){fire();p.fireCd=fireRate}
+ t+=dt;p.inv=Math.max(0,p.inv-dt);p.dashCd=Math.max(0,p.dashCd-dt);p.dashT=Math.max(0,p.dashT-dt);
+ let dx=(keys.right?1:0)-(keys.left?1:0),dy=(keys.down?1:0)-(keys.up?1:0);let m=Math.hypot(dx,dy);if(m){dx/=m;dy/=m}
+ const speed=p.speed*(1+build.speed*.1);
+ if(p.dashT>0){p.x+=p.dx*680*dt;p.y+=p.dy*680*dt}else{p.x+=dx*speed*dt;p.y+=dy*speed*dt}
+ p.x=clamp(p.x,25,W-25);p.y=clamp(p.y,25,H-25);
+ p.fire-=dt;if(p.fire<=0){shoot();p.fire=Math.max(.1,.42*Math.pow(.82,build.rate))}
  if(wave<5){
-   spawnT+=dt;const cap=7+wave*3;const rate=Math.max(.22,.75-wave*.08);
-   if(spawnT>rate&&enemies.length<cap){spawnT=0;const r=Math.random();spawnEnemy(r<.55?'drone':r<.82?'runner':r<.96?'brute':'elite')}
-   const need=12+wave*7;if(waveKills>=need&&enemies.length===0){waveDelay+=dt;if(waveDelay>1.2){wave++;waveKills=0;waveDelay=0;msg('WAVE '+wave);beep(640,.12,'triangle',.03);if(wave===5)spawnBoss()}}
+   spawnTimer+=dt;const need=10+wave*6;
+   if(waveKills<need&&spawnTimer>Math.max(.25,.72-wave*.07)&&enemies.length<7+wave*2){spawnTimer=0;spawnEnemy()}
+   if(waveKills>=need&&enemies.length===0){nextWaveTimer+=dt;if(nextWaveTimer>1){wave++;waveKills=0;nextWaveTimer=0;if(wave===5)spawnBoss()}}
  }
- for(const e of enemies){
-   e.hit=Math.max(0,e.hit-dt);const a=Math.atan2(p.y-e.y,p.x-e.x);e.x+=Math.cos(a)*e.speed*dt;e.y+=Math.sin(a)*e.speed*dt;
-   if(dist(p,e)<p.r+e.r){hurt(e.dmg);const k=Math.atan2(e.y-p.y,e.x-p.x);e.x+=Math.cos(k)*22;e.y+=Math.sin(k)*22}
- }
+ for(const e of enemies){const a=Math.atan2(p.y-e.y,p.x-e.x);e.x+=Math.cos(a)*e.speed*dt;e.y+=Math.sin(a)*e.speed*dt;if(distance(p,e)<p.r+e.r)hurt(e.dmg)}
  if(boss&&boss.alive){
-   boss.hit=Math.max(0,boss.hit-dt);const a=Math.atan2(p.y-boss.y,p.x-boss.x);boss.x+=Math.cos(a)*boss.speed*dt;boss.y+=Math.sin(a)*boss.speed*dt;boss.shoot-=dt;
-   if(boss.shoot<=0){boss.shoot=Math.max(.5,1.45-boss.phase*.12);const count=8+boss.phase*2;for(let i=0;i<count;i++){const an=i/count*Math.PI*2+time*.3;bullets.push({enemy:true,x:boss.x,y:boss.y,vx:Math.cos(an)*(170+boss.phase*25),vy:Math.sin(an)*(170+boss.phase*25),r:6,life:3,dmg:12})}boss.phase=Math.min(3,boss.phase+1);ring(boss.x,boss.y,'#ff607e',18,82)}
-   if(dist(p,boss)<p.r+boss.r)hurt(boss.dmg)
+   const a=Math.atan2(p.y-boss.y,p.x-boss.x);boss.x+=Math.cos(a)*boss.speed*dt;boss.y+=Math.sin(a)*boss.speed*dt;
+   boss.shot-=dt;if(boss.shot<=0){boss.shot=Math.max(.55,1.4-boss.phase*.13);const n=8+boss.phase*2;for(let i=0;i<n;i++){const an=i/n*Math.PI*2+t*.25;bullets.push({x:boss.x,y:boss.y,vx:Math.cos(an)*(180+boss.phase*25),vy:Math.sin(an)*(180+boss.phase*25),r:6,life:3,dmg:12,enemy:true})}boss.phase=Math.min(3,boss.phase+1)}
+   if(distance(p,boss)<p.r+boss.r)hurt(boss.dmg)
  }
  for(let i=bullets.length-1;i>=0;i--){
-   const b=bullets[i];b.life-=dt;if(b.chain){if(b.life<=0)bullets.splice(i,1);continue}
-   b.x+=b.vx*dt;b.y+=b.vy*dt;
-   if(b.enemy){if(dist(p,b)<p.r+b.r){hurt(b.dmg);bullets.splice(i,1);continue}}
-   else{
-     let hit=null;if(boss&&boss.alive&&dist(b,boss)<b.r+boss.r)hit=boss;else for(const e of enemies){if(dist(b,e)<b.r+e.r){hit=e;break}}
-     if(hit){const dmg=b.dmg*(b.crit?2:1);hit.hp-=dmg;hit.hit=.08;score+=Math.round(dmg);particle(b.x,b.y,b.crit?'#ffd56a':'#77eaff',b.crit?8:4,110);text(b.x,b.y-5,Math.round(dmg)+(b.crit?'!':''),b.crit?'#ffd56a':'#bdf7ff',b.crit?17:13);chainFrom(hit,dmg);hitStop=b.crit?.018:.006;if(hit===boss&&hit.hp<=0)bossDead();if(hit!==boss&&hit.hp<=0)killEnemy(hit);if(b.pierce>0)b.pierce--;else{bullets.splice(i,1);continue}}
+   const b=bullets[i];b.life-=dt;b.x+=b.vx*dt;b.y+=b.vy*dt;
+   if(b.enemy){
+     if(distance(p,b)<p.r+b.r){hurt(b.dmg);bullets.splice(i,1);continue}
+   }else{
+     let hit=null;
+     if(boss&&boss.alive&&distance(b,boss)<b.r+boss.r)hit=boss;
+     if(!hit){for(const e of enemies){if(distance(b,e)<b.r+e.r){hit=e;break}}}
+     if(hit){
+       const dmg=b.dmg*(b.crit?2:1);hit.hp-=dmg;score+=dmg;particles(b.x,b.y,b.crit?"#ffd56a":"#73e6ff",b.crit?7:3);
+       if(hit===boss&&hit.hp<=0){boss.alive=false;score+=3000;particles(boss.x,boss.y,"#ff7d9c",50);setTimeout(finish,500)}
+       else if(hit!==boss&&hit.hp<=0)killEnemy(hit);
+       if((b.pierce||0)>0)b.pierce--;else{bullets.splice(i,1);continue}
+     }
    }
    if(b.life<=0||b.x<-60||b.x>W+60||b.y<-60||b.y>H+60)bullets.splice(i,1)
  }
- for(let i=orbs.length-1;i>=0;i--){const o=orbs[i];const d=dist(p,o);if(d<145){const a=Math.atan2(p.y-o.y,p.x-o.x),m=220+(145-d)*3;o.vx+=Math.cos(a)*m*dt;o.vy+=Math.sin(a)*m*dt}o.x+=o.vx*dt;o.y+=o.vy*dt;o.vx*=.96;o.vy*=.96;if(d<p.r+o.r+5){gainXP(o.xp);particle(o.x,o.y,'#8beaff',5,80);orbs.splice(i,1)}}
- if(build.orbital){const n=Math.min(4,build.orbital);for(let k=0;k<n;k++){const a=time*2.6+k/n*Math.PI*2,ox=p.x+Math.cos(a)*62,oy=p.y+Math.sin(a)*62;for(const e of [...enemies,boss].filter(Boolean)){if(e.alive===false||e.hp<=0)continue;if(Math.hypot(e.x-ox,e.y-oy)<e.r+9&&(!e.orbCd||e.orbCd<=0)){e.orbCd=.3;const dm=18+build.damage*2;e.hp-=dm;particle(ox,oy,'#c29cff',4,90);if(e===boss&&e.hp<=0)bossDead();if(e!==boss&&e.hp<=0)killEnemy(e)}}}}
- for(const e of [...enemies,boss].filter(Boolean))if(e.orbCd)e.orbCd=Math.max(0,e.orbCd-dt);
- for(const q of particles){q.x+=q.vx*dt;q.y+=q.vy*dt;q.vx*=.97;q.vy*=.97;q.a-=dt*2.1}particles=particles.filter(q=>q.a>0);
- for(const q of texts){q.y+=q.vy*dt;q.a-=dt*1.5}texts=texts.filter(q=>q.a>0);
- for(const r of rings){r.r+=(r.max-r.r)*.18;r.a-=dt*2.1}rings=rings.filter(r=>r.a>0);
- shake=Math.max(0,shake-dt*28);flash=Math.max(0,flash-dt);score+=dt*5;updateUI()
+ for(let i=gems.length-1;i>=0;i--){const g=gems[i],d=distance(p,g);if(d<160){const a=Math.atan2(p.y-g.y,p.x-g.x);g.x+=Math.cos(a)*(220+(160-d)*3)*dt;g.y+=Math.sin(a)*(220+(160-d)*3)*dt}if(distance(p,g)<p.r+g.r+4){gainXp(g.xp);gems.splice(i,1)}}
+ for(const q of parts){q.x+=q.vx*dt;q.y+=q.vy*dt;q.vx*=.96;q.vy*=.96;q.a-=dt*2}parts=parts.filter(q=>q.a>0);
+ score+=dt*4;updateUI();
 }
-function drawGrid(){
- X.fillStyle='#060a12';X.fillRect(0,0,W,H);
- const g=X.createRadialGradient(p.x,p.y,20,p.x,p.y,520);g.addColorStop(0,'rgba(22,52,84,.38)');g.addColorStop(1,'rgba(4,7,12,0)');X.fillStyle=g;X.fillRect(0,0,W,H);
- X.strokeStyle='rgba(78,126,168,.09)';X.lineWidth=1;const sz=44,ox=(time*8)%sz,oy=(time*5)%sz;
- for(let x=-sz+ox;x<W+sz;x+=sz){X.beginPath();X.moveTo(x,0);X.lineTo(x,H);X.stroke()}
- for(let y=-sz+oy;y<H+sz;y+=sz){X.beginPath();X.moveTo(0,y);X.lineTo(W,y);X.stroke()}
- for(let i=0;i<28;i++){const x=(i*113+time*11*(i%3+1))%W,y=(i*79)%H;X.fillStyle='rgba(129,199,255,'+(0.12+(i%4)*.04)+')';X.fillRect(x,y,1.5,1.5)}
-}
-function glowCircle(x,y,r,c){X.save();X.shadowColor=c;X.shadowBlur=22;X.fillStyle=c;X.beginPath();X.arc(x,y,r,0,Math.PI*2);X.fill();X.restore()}
 function draw(){
- X.save();if(shake)X.translate(rand(-shake,shake),rand(-shake,shake));drawGrid();
- for(const t of p.trail){X.globalAlpha=t.a;X.fillStyle='#5ddff8';X.beginPath();X.arc(t.x,t.y,10,0,6.28);X.fill();t.a*=.9}X.globalAlpha=1;
- for(const o of orbs){X.save();X.shadowColor='#72eaff';X.shadowBlur=14;X.fillStyle='#7eeaff';X.beginPath();X.arc(o.x,o.y,o.r,0,6.28);X.fill();X.restore()}
- for(const e of enemies){X.save();if(e.hit)X.globalAlpha=.55;X.translate(e.x,e.y);X.rotate(time*(e.type==='runner'?3:.6));X.shadowColor=e.color;X.shadowBlur=e.elite?28:13;X.strokeStyle=e.color;X.fillStyle='rgba(8,12,20,.9)';X.lineWidth=e.elite?4:2;X.beginPath();if(e.type==='runner'){X.moveTo(0,-e.r);X.lineTo(e.r,e.r);X.lineTo(-e.r,e.r)}else if(e.type==='brute'){for(let k=0;k<6;k++){const a=k/6*6.28,Xx=Math.cos(a)*e.r,Yy=Math.sin(a)*e.r;k?X.lineTo(Xx,Yy):X.moveTo(Xx,Yy)}X.closePath()}else X.arc(0,0,e.r,0,6.28);X.fill();X.stroke();X.fillStyle=e.color;X.beginPath();X.arc(0,0,e.elite?7:4,0,6.28);X.fill();X.restore()}
- if(boss&&boss.alive){X.save();X.translate(boss.x,boss.y);X.rotate(time*.3);X.shadowColor='#ff5f7c';X.shadowBlur=38;X.strokeStyle='#ff7189';X.fillStyle='#12101b';X.lineWidth=5;X.beginPath();for(let k=0;k<10;k++){const a=k/10*6.28,r=k%2?boss.r*.65:boss.r;k?X.lineTo(Math.cos(a)*r,Math.sin(a)*r):X.moveTo(Math.cos(a)*r,Math.sin(a)*r)}X.closePath();X.fill();X.stroke();X.fillStyle='#ff6480';X.beginPath();X.arc(0,0,13,0,6.28);X.fill();X.restore()}
- for(const b of bullets){if(b.chain){X.globalAlpha=clamp(b.life/.12,0,1);X.strokeStyle='#a889ff';X.lineWidth=3;X.beginPath();X.moveTo(b.x,b.y);X.lineTo(b.tx,b.ty);X.stroke();X.globalAlpha=1;continue}glowCircle(b.x,b.y,b.r,b.enemy?'#ff5f77':b.crit?'#ffd56a':'#73e6ff')}
- if(build.orbital){for(let k=0;k<Math.min(4,build.orbital);k++){const a=time*2.6+k/Math.min(4,build.orbital)*6.28,ox=p.x+Math.cos(a)*62,oy=p.y+Math.sin(a)*62;X.save();X.translate(ox,oy);X.rotate(a+time*4);X.shadowColor='#b997ff';X.shadowBlur=16;X.fillStyle='#c9b2ff';X.fillRect(-10,-3,20,6);X.restore()}}
- X.save();X.translate(p.x,p.y);if(p.inv>0&&Math.floor(p.inv*14)%2===0)X.globalAlpha=.45;X.shadowColor='#73e6ff';X.shadowBlur=25;X.fillStyle='#d8fbff';X.beginPath();for(let k=0;k<8;k++){const a=k/8*6.28-Math.PI/2,r=k%2?9:18;k?X.lineTo(Math.cos(a)*r,Math.sin(a)*r):X.moveTo(Math.cos(a)*r,Math.sin(a)*r)}X.closePath();X.fill();X.fillStyle='#5de0ff';X.beginPath();X.arc(0,0,6,0,6.28);X.fill();X.restore();X.globalAlpha=1;
- for(const q of particles){X.globalAlpha=q.a;X.fillStyle=q.c;X.beginPath();X.arc(q.x,q.y,q.r,0,6.28);X.fill()}X.globalAlpha=1;
- for(const q of rings){X.globalAlpha=q.a;X.strokeStyle=q.c;X.lineWidth=2;X.beginPath();X.arc(q.x,q.y,q.r,0,6.28);X.stroke()}X.globalAlpha=1;
- for(const q of texts){X.globalAlpha=q.a;X.fillStyle=q.c;X.font='bold '+q.s+'px system-ui';X.textAlign='center';X.fillText(q.t,q.x,q.y)}X.globalAlpha=1;
- if(flash){X.fillStyle='rgba(255,70,95,'+flash*1.8+')';X.fillRect(0,0,W,H)}
- const vg=X.createRadialGradient(W/2,H/2,H*.2,W/2,H/2,H*.78);vg.addColorStop(0,'rgba(0,0,0,0)');vg.addColorStop(1,'rgba(0,0,0,.5)');X.fillStyle=vg;X.fillRect(0,0,W,H);
- X.restore()
+ ctx.fillStyle="#060a12";ctx.fillRect(0,0,W,H);
+ const glow=ctx.createRadialGradient(p.x,p.y,10,p.x,p.y,500);glow.addColorStop(0,"rgba(30,75,115,.34)");glow.addColorStop(1,"rgba(0,0,0,0)");ctx.fillStyle=glow;ctx.fillRect(0,0,W,H);
+ ctx.strokeStyle="rgba(90,140,190,.09)";ctx.lineWidth=1;for(let x=(t*7)%44-44;x<W;x+=44){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke()}for(let y=(t*5)%44-44;y<H;y+=44){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke()}
+ for(const g of gems){ctx.save();ctx.shadowColor="#73e6ff";ctx.shadowBlur=12;ctx.fillStyle="#73e6ff";ctx.beginPath();ctx.arc(g.x,g.y,g.r,0,Math.PI*2);ctx.fill();ctx.restore()}
+ for(const e of enemies){ctx.save();ctx.translate(e.x,e.y);ctx.shadowColor=e.color;ctx.shadowBlur=16;ctx.fillStyle="#09101b";ctx.strokeStyle=e.color;ctx.lineWidth=2;ctx.beginPath();ctx.arc(0,0,e.r,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.fillStyle=e.color;ctx.beginPath();ctx.arc(0,0,4,0,Math.PI*2);ctx.fill();ctx.restore()}
+ if(boss&&boss.alive){ctx.save();ctx.translate(boss.x,boss.y);ctx.rotate(t*.3);ctx.shadowColor="#ff6781";ctx.shadowBlur=34;ctx.strokeStyle="#ff6781";ctx.fillStyle="#160e18";ctx.lineWidth=5;ctx.beginPath();for(let i=0;i<10;i++){const a=i/10*Math.PI*2,r=i%2?30:boss.r;i?ctx.lineTo(Math.cos(a)*r,Math.sin(a)*r):ctx.moveTo(Math.cos(a)*r,Math.sin(a)*r)}ctx.closePath();ctx.fill();ctx.stroke();ctx.restore()}
+ for(const b of bullets){ctx.save();ctx.shadowColor=b.enemy?"#ff667e":b.crit?"#ffd56a":"#73e6ff";ctx.shadowBlur=16;ctx.fillStyle=ctx.shadowColor;ctx.beginPath();ctx.arc(b.x,b.y,b.r,0,Math.PI*2);ctx.fill();ctx.restore()}
+ for(const q of parts){ctx.globalAlpha=q.a;ctx.fillStyle=q.color;ctx.beginPath();ctx.arc(q.x,q.y,q.r,0,Math.PI*2);ctx.fill()}ctx.globalAlpha=1;
+ ctx.save();ctx.translate(p.x,p.y);if(p.inv>0&&Math.floor(p.inv*15)%2===0)ctx.globalAlpha=.4;ctx.shadowColor="#73e6ff";ctx.shadowBlur=26;ctx.fillStyle="#d9fbff";ctx.beginPath();for(let i=0;i<8;i++){const a=i/8*Math.PI*2-Math.PI/2,r=i%2?8:18;i?ctx.lineTo(Math.cos(a)*r,Math.sin(a)*r):ctx.moveTo(Math.cos(a)*r,Math.sin(a)*r)}ctx.closePath();ctx.fill();ctx.fillStyle="#58dffb";ctx.beginPath();ctx.arc(0,0,6,0,Math.PI*2);ctx.fill();ctx.restore();ctx.globalAlpha=1;
 }
 function loop(now){if(!running||paused)return;const dt=Math.min(.033,(now-last)/1000);last=now;update(dt);draw();if(running&&!paused)requestAnimationFrame(loop)}
-document.addEventListener('keydown',e=>{if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown',' ','w','a','s','d','W','A','S','D'].includes(e.key))e.preventDefault();if(e.key==='ArrowLeft'||e.key==='a'||e.key==='A')keys.left=true;if(e.key==='ArrowRight'||e.key==='d'||e.key==='D')keys.right=true;if(e.key==='ArrowUp'||e.key==='w'||e.key==='W')keys.up=true;if(e.key==='ArrowDown'||e.key==='s'||e.key==='S')keys.down=true;if(e.key===' ')dash()},{passive:false});
-document.addEventListener('keyup',e=>{if(e.key==='ArrowLeft'||e.key==='a'||e.key==='A')keys.left=false;if(e.key==='ArrowRight'||e.key==='d'||e.key==='D')keys.right=false;if(e.key==='ArrowUp'||e.key==='w'||e.key==='W')keys.up=false;if(e.key==='ArrowDown'||e.key==='s'||e.key==='S')keys.down=false});
-function hold(id,k){const el=document.getElementById(id);el.addEventListener('pointerdown',e=>{e.preventDefault();keys[k]=true});['pointerup','pointercancel','pointerleave'].forEach(ev=>el.addEventListener(ev,()=>keys[k]=false))}
-hold('leftBtn','left');hold('rightBtn','right');hold('upBtn','up');hold('downBtn','down');document.getElementById('dashBtn').addEventListener('click',dash);document.getElementById('startBtn').addEventListener('click',start);
+function start(){reset();overlay.style.display="none";running=true;paused=false;last=performance.now();requestAnimationFrame(loop)}
+document.getElementById("startBtn").addEventListener("click",start);
+document.addEventListener("keydown",e=>{if(["ArrowLeft","ArrowRight","ArrowUp","ArrowDown"," ","w","a","s","d","W","A","S","D"].includes(e.key))e.preventDefault();if(e.key==="ArrowLeft"||e.key==="a"||e.key==="A")keys.left=true;if(e.key==="ArrowRight"||e.key==="d"||e.key==="D")keys.right=true;if(e.key==="ArrowUp"||e.key==="w"||e.key==="W")keys.up=true;if(e.key==="ArrowDown"||e.key==="s"||e.key==="S")keys.down=true;if(e.key===" ")dash()},{passive:false});
+document.addEventListener("keyup",e=>{if(e.key==="ArrowLeft"||e.key==="a"||e.key==="A")keys.left=false;if(e.key==="ArrowRight"||e.key==="d"||e.key==="D")keys.right=false;if(e.key==="ArrowUp"||e.key==="w"||e.key==="W")keys.up=false;if(e.key==="ArrowDown"||e.key==="s"||e.key==="S")keys.down=false});
+function hold(id,key){const el=document.getElementById(id);el.addEventListener("pointerdown",e=>{e.preventDefault();keys[key]=true});["pointerup","pointercancel","pointerleave"].forEach(ev=>el.addEventListener(ev,()=>keys[key]=false))}
+hold("left","left");hold("right","right");hold("up","up");hold("down","down");document.getElementById("dash").addEventListener("click",dash);
 reset();draw();
 })();
-</script>
-</body>
-</html>
+</script></body></html>
